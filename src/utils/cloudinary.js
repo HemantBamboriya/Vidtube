@@ -30,3 +30,4 @@ import fs from "fs";
         }
     }
     
+export { uploadONCloudinary}
