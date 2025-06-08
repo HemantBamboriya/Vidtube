@@ -14,6 +14,15 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))//to handle url on site
 app.use(express.static("public"))//to store image 
 app.use(cookieParser())//user ke browser ki cookie access and set karne ke liye from our server to perform CRUD operation
 
+//routes import
+import userRouter from './routes/user.routes.js'
+
+//router declaration
+app.use("/api/v1/users",userRouter)
+
+//http://localhost:8000/api/v1/users/register
+
+
 export {app}
 
 
