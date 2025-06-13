@@ -5,6 +5,7 @@ import { uploadONCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
+//password of user is 123456 and username= hemant full name = hemantdhakad
 
 const generateAccessAndRefreshTokens = async(UserId)=>{
     try {
