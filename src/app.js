@@ -16,9 +16,11 @@ app.use(cookieParser())//user ke browser ki cookie access and set karne ke liye 
 
 //routes import
 import userRouter from './routes/user.routes.js'
+import tweetRouter from './routes/tweet.routes.js'
 
 //router declaration
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/tweet",tweetRouter)
 
 //http://localhost:8000/api/v1/users/register
 
