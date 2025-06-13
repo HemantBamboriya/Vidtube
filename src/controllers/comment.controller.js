@@ -142,7 +142,7 @@ const updateComment = asyncHandler(async (req, res) => {
   // response
 
   const {commentId} = req.params
-  const {Content} = req.body
+  const {content} = req.body
 
 if(!commentId || !content){
     throw new ApiError(400,"all fields are required")
@@ -155,9 +155,7 @@ if(!commentId || !content){
   const comment = await Comment.findByIdAndUpdate(
     commentId,
     {
-        $set:{
-            Content
-        },
+       content
     },
     {new:true}
   )
@@ -180,6 +178,28 @@ if(!commentId || !content){
 
 const deleteComment = asyncHandler(async (req, res) => {
     // TODO: delete a comment
+
+    const {commentId} = req.params
+
+
+    if(!isValidObjectId(commentId)){
+        throw new ApiError(400,"invalid comment id")
+    }
+
+    const comment = await Comment.findByIdAndDelete( commentId )
+
+    if(!comment){
+     throw new ApiError(400,"comment not found")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+        {},
+    "comment is deleted successfully")
+    )
 })
 
 export {
