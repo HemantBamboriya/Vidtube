@@ -3,7 +3,7 @@ import { getVideoComments,addComment,updateComment,deleteComment } from "../cont
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 
-const router = Routes();
+const router = Router();
 router.use(verifyJWT)
 
 router.route("/:videoId").get(getVideoComments).post(addComment);
