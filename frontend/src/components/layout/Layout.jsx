@@ -1,0 +1,25 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Home, Compass, History, Heart, ListVideo, Users, Video, Upload, Search, Sun, Moon, Menu, Bell, LogOut, UserRound, Settings, X } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
+import { Avatar, Button, IconButton, Dropdown } from "../ui";
+import useDebounce from "../../hooks/useDebounce";
+
+const navItems = [["Home", "/", Home], ["Subscriptions", "/subscriptions", Users], ["History", "/history", History], ["Liked videos", "/liked", Heart], ["Playlists", "/playlists", ListVideo], ["Community", "/community", Compass], ["Your videos", "/studio", Video]];
+export function Navbar({ onMenu }) {
+  const { user, logout } = useAuth(); const { theme, toggleTheme } = useTheme(); const [search, setSearch] = useState(""); const [searchOpen, setSearchOpen] = useState(false); const debounced = useDebounce(search); const navigate = useNavigate(); const location = useLocation();
+  useEffect(() => { if (debounced.trim() && location.pathname === "/results") navigate(`/results?query=${encodeURIComponent(debounced.trim())}`, { replace: true }); }, [debounced]);
+  const submit = (e) => { e.preventDefault(); if (search.trim()) navigate(`/results?query=${encodeURIComponent(search.trim())}`); setSearchOpen(false); };
+  return <header className="navbar">
+    <div className="nav-brand"><IconButton label="Open navigation" className="mobile-only" onClick={onMenu}><Menu/></IconButton><Link to="/" className="brand"><span className="brand-mark"><Video size={19} fill="currentColor"/></span><span>vid<span>tube</span></span></Link></div>
+    <form className={`searchbar ${searchOpen ? "search-expanded" : ""}`} onSubmit={submit}><Search className="search-leading" size={18}/><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search videos, creators..." aria-label="Search videos"/><button aria-label="Submit search"><Search size={18}/></button></form>
+    <div className="nav-actions"><IconButton label="Search" className="mobile-only" onClick={() => setSearchOpen((v) => !v)}><Search/></IconButton><Link to="/upload" className="upload-nav"><Button size="sm" leftIcon={<Upload size={16}/>}>Upload</Button></Link><IconButton label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} onClick={toggleTheme}>{theme === "dark" ? <Sun/> : <Moon/>}</IconButton><Dropdown trigger={<button className="avatar-trigger" aria-label="Open account menu"><Avatar src={user?.avatar} name={user?.fullName}/></button>}><div className="profile-menu"><div className="profile-mini"><Avatar src={user?.avatar} name={user?.fullName}/><div><b>{user?.fullName}</b><small>@{user?.username}</small></div></div><Link to={`/channel/${user?.username}`}><UserRound size={17}/> My channel</Link><Link to="/settings"><Settings size={17}/> Settings</Link><button onClick={logout}><LogOut size={17}/> Sign out</button></div></Dropdown></div>
+  </header>;
+}
+
+export function Sidebar({ open, onClose }) { const { user } = useAuth(); return <><div className={`drawer-overlay ${open ? "show" : ""}`} onClick={onClose}/><aside className={`sidebar ${open ? "drawer-open" : ""}`}><div className="side-scroll"><div className="side-group">{navItems.slice(0, 2).map(([label, to, Icon]) => <NavLink end={to === "/"} onClick={onClose} className={({ isActive }) => `side-link ${isActive ? "selected" : ""}`} to={to} key={to}><Icon size={19}/>{label}</NavLink>)}</div><div className="side-separator"/><div className="side-label">YOU</div><div className="side-group">{navItems.slice(2).map(([label, to, Icon]) => <NavLink onClick={onClose} className={({ isActive }) => `side-link ${isActive ? "selected" : ""}`} to={to} key={to}><Icon size={19}/>{label}</NavLink>)}</div><div className="side-separator"/><div className="side-label">YOUR CHANNEL</div><NavLink className="side-link" to={`/channel/${user?.username}`} onClick={onClose}><Avatar src={user?.avatar} name={user?.fullName} size="xs"/>My channel</NavLink><NavLink className="side-link" to="/upload" onClick={onClose}><Upload size={18}/>Upload a video</NavLink><div className="sidebar-note"><span className="brand-mark"><Video size={16}/></span><p>Your next favorite video is waiting.</p></div></div></aside></>; }
+
+export function MobileTabBar() { const tabs = [["Home", "/", Home], ["Subs", "/subscriptions", Users], ["Upload", "/upload", Upload], ["Library", "/history", ListVideo], ["You", "/studio", UserRound]]; return <nav className="mobile-tabs">{tabs.map(([label, to, Icon]) => <NavLink key={to} end={to === "/"} to={to}><Icon size={20}/><span>{label}</span></NavLink>)}</nav>; }
+
+export function AppLayout({ children }) { const [drawer, setDrawer] = useState(false); const location = useLocation(); useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [location.pathname]); return <><Navbar onMenu={() => setDrawer(true)}/><Sidebar open={drawer} onClose={() => setDrawer(false)}/><main className="main-content">{children}</main><MobileTabBar/></>; }

@@ -16,7 +16,7 @@ const videoSchema = new Schema
     required:true,
    },
 
-   tilte:{
+   title:{
     type:String,
     required:true,
    },

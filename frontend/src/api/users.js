@@ -1,0 +1,11 @@
+import api from "./client";
+export const login = (data) => api.post("/users/login", data).then((r) => r.data.data);
+export const register = (data) => api.post("/users/register", data).then((r) => r.data.data);
+export const logout = () => api.post("/users/logout");
+export const getCurrentUser = () => api.get("/users/current-user").then((r) => r.data.data);
+export const getChannel = (username) => api.get(`/users/c/${encodeURIComponent(username)}`).then((r) => r.data.data);
+export const getHistory = () => api.get("/users/history").then((r) => r.data.data);
+export const updateAccount = (data) => api.patch("/users/update-account", data).then((r) => r.data.data);
+export const updateAvatar = (data) => api.patch("/users/avatar", data).then((r) => r.data.data);
+export const updateCover = (data) => api.patch("/users/cover-image", data).then((r) => r.data.data);
+export const changePassword = (data) => api.post("/users/change-password", data);
